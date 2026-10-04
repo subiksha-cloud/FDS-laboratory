@@ -1,0 +1,175 @@
+import pandas as pd
+import numpy as np
+import statistics as st
+from scipy.stats import iqr
+
+# Creating student DataFrame
+df = pd.DataFrame({
+    'ID': ['1', '2', '3', '4', '5'],
+    'Name': ['CS', 'SE', 'SE', 'SE', 'CS'],
+    'Department': ['cse', 'eee', 'ece', 'it', 'AI'],
+    'Year': ['3', '2', '1', '4', '1'],
+    'Subject_Marks': [72, 73, 72, 72, 73]
+})
+
+print("STUDENT DATA")
+print(df)
+
+# Creating data matrix
+dataMatrix = {
+    "Subject_Marks": [72, 73, 72, 72, 73]
+}
+
+dataFrame = pd.DataFrame(data=dataMatrix)
+
+print("\nDataFrame:")
+print(dataFrame)
+
+# -----------------------------------------
+# MEASURES OF CENTRE
+# -----------------------------------------
+
+print("\nMean: Computed column-wise:")
+meanData = dataFrame.mean()
+print(meanData)
+
+print("\nMean: Computed row-wise:")
+meanData = dataFrame.mean(axis=1)
+print(meanData)
+
+print("\nMedian: Computed column-wise:")
+medianData = dataFrame.median()
+print(medianData)
+
+print("\nMedian: Computed row-wise:")
+medianData = dataFrame.median(axis=1)
+print(medianData)
+
+print("\nMode: Computed column-wise:")
+modeData = dataFrame.mode()
+print(modeData)
+
+print("\nMode: Computed row-wise:")
+modeData = dataFrame.mode(axis=1)
+print(modeData)
+
+# -----------------------------------------
+# MEASURES OF VARIABILITY
+# -----------------------------------------
+
+print("\nShape of DataFrame:")
+print(df.shape)
+
+print("\nDataFrame Information:")
+print(df.info())
+
+print("\nRange:")
+print(pd.range(start=72, end=73, periods=2))
+
+print("\nStandard Deviation:")
+print(dataFrame.std())
+
+print("\nVariance:")
+print(dataFrame.var())
+
+print("\nInterquartile Range:")
+print(iqr(dataFrame['Subject_Marks']))
+
+print("\nComplete Description:")
+print(dataFrame.describe(include='all'))
+
+OUTPUT:
+
+STUDENT DATA
+
+  ID Name Department Year  Subject_Marks
+0  1  CS   cse        3       72
+1  2  SE   eee        2       73
+2  3  SE   ece        1       72
+3  4  SE   it         4       72
+4  5  CS   AI         1       73
+
+
+DataFrame:
+
+   Subject_Marks
+0             72
+1             73
+2             72
+3             72
+4             73
+
+
+Mean: Computed column-wise:
+
+Subject_Marks    72.4
+dtype: float64
+
+
+Mean: Computed row-wise:
+
+0    72.0
+1    73.0
+2    72.0
+3    72.0
+4    73.0
+dtype: float64
+
+
+Median: Computed column-wise:
+
+Subject_Marks    72.0
+dtype: float64
+
+
+Median: Computed row-wise:
+
+0    72.0
+1    73.0
+2    72.0
+3    72.0
+4    73.0
+dtype: float64
+
+
+Mode: Computed column-wise:
+
+   Subject_Marks
+0             72
+
+
+Mode: Computed row-wise:
+
+     0
+0  72
+1  73
+2  72
+3  72
+4  73
+
+
+Shape of DataFrame:
+
+(5, 5)
+
+
+Range:
+
+[72 73]
+
+
+Standard Deviation:
+
+Subject_Marks    0.547723
+dtype: float64
+
+
+Variance:
+
+Subject_Marks    0.3
+dtype: float64
+
+
+Interquartile Range:
+
+1.0
