@@ -1,0 +1,175 @@
+import pandas as pd
+
+# -----------------------------------------
+# DATA HANDLING FUNCTIONS USING PANDAS
+# -----------------------------------------
+
+# Reading employees.csv
+data = pd.read_csv("employees.csv")
+
+print("ORIGINAL DATA")
+print(data)
+
+# -----------------------------------------
+# 1. Handling Missing Data - isnull()
+# -----------------------------------------
+print("\nNULL VALUES IN TEAM COLUMN")
+bool_series = pd.isnull(data["Team"])
+print(data[bool_series])
+
+# -----------------------------------------
+# 2. Handling Missing Data - notnull()
+# -----------------------------------------
+print("\nNON-NULL VALUES IN GENDER COLUMN")
+bool_series = pd.notnull(data["Gender"])
+print(data[bool_series])
+
+# -----------------------------------------
+# 3. Dropping Missing Values - dropna()
+# -----------------------------------------
+print("\nDATA AFTER DROPPING NULL VALUES")
+new_data = data.dropna(axis=0, how='any')
+print(new_data)
+
+# -----------------------------------------
+# 4. Filling Missing Values - fillna()
+# -----------------------------------------
+print("\nDATA AFTER FILLING MISSING TEAM VALUES")
+
+data["Team"] = data["Team"].fillna("No Team")
+print(data)
+
+# -----------------------------------------
+# 5. Transform Data using apply()
+# -----------------------------------------
+print("\nAPPLY() OPERATION")
+
+def check_salary(num):
+    if num < 50000:
+        return "Low"
+    elif num >= 50000 and num < 100000:
+        return "Normal"
+    else:
+        return "High"
+
+new = data["Salary"].apply(check_salary)
+print(new)
+
+# -----------------------------------------
+# 6. Transform Data using map()
+# -----------------------------------------
+print("\nMAP() OPERATION")
+
+gender_map = {
+    "Male": "M",
+    "Female": "F"
+}
+
+mapped_gender = data["Gender"].map(gender_map)
+print(mapped_gender)
+
+# -----------------------------------------
+# 7. Detect and Filter Outliers
+# -----------------------------------------
+print("\nDATA DESCRIPTION")
+
+df = data.drop(columns=["First Name", "Gender"])
+print(df.describe())
+
+# -----------------------------------------
+# 8. Vectorized String Operation - upper()
+# -----------------------------------------
+print("\nTEAM COLUMN IN UPPERCASE")
+
+data["Team"] = data["Team"].str.upper()
+print(data["Team"])
+
+# -----------------------------------------
+# 9. Vectorized String Operation - lower()
+# -----------------------------------------
+print("\nFIRST NAME IN LOWERCASE")
+
+data["First Name"] = data["First Name"].str.lower()
+print(data["First Name"])
+
+OUTPUT:
+
+ORIGINAL DATA
+
+  First Name  Gender  Start Date  Last Login Time  Salary  Bonus%  Team
+0    Douglas    Male  ...         ...          97308  6.945   Marketing
+1    Thomas     Male  ...         ...          61933  4.170   Finance
+2    Maria    Female  ...         ...          130590 11.858  Finance
+...
+
+NULL VALUES IN TEAM COLUMN
+
+   First Name  Gender  Salary  Team
+...           ...      ...     NaN
+
+NON-NULL VALUES IN GENDER COLUMN
+
+   First Name  Gender  Salary  Team
+0    Douglas    Male   ...     Marketing
+1    Thomas     Male   ...     Finance
+...
+
+DATA AFTER DROPPING NULL VALUES
+
+   First Name  Gender  Salary  Team
+0    Douglas    Male   ...     Marketing
+1    Thomas     Male   ...     Finance
+...
+
+DATA AFTER FILLING MISSING TEAM VALUES
+
+   First Name  Gender  Salary  Team
+0    Douglas    Male   ...     MARKETING
+1    Thomas     Male   ...     FINANCE
+...
+
+APPLY() OPERATION
+
+0       Normal
+1       Normal
+2         High
+3          Low
+...
+Name: Salary, dtype: object
+
+MAP() OPERATION
+
+0    M
+1    M
+2    F
+3    M
+...
+Name: Gender, dtype: object
+
+DATA DESCRIPTION
+
+             Salary
+count      ...
+mean       ...
+std        ...
+min        ...
+25%        ...
+50%        ...
+75%        ...
+max        ...
+
+TEAM COLUMN IN UPPERCASE
+
+0          MARKETING
+1            FINANCE
+2            FINANCE
+...
+Name: Team, dtype: object
+
+FIRST NAME IN LOWERCASE
+
+0          douglas
+1          thomas
+2           maria
+...
+Name: First Name, dtype: object
