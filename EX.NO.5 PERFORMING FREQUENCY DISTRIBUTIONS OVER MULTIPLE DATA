@@ -1,0 +1,152 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+from scipy import stats
+
+# -----------------------------------------
+# Creating Sales DataFrame
+# -----------------------------------------
+
+df = pd.DataFrame({
+    'ID': ['1', '2', '3', '4', '5', '6'],
+    'Product_name': ['alex', 'bob', 'cathy', 'doge', 'eric', 'fred'],
+    'State': ['Taminadu', 'Tamilnadu', 'Taminadu',
+              'Andra', 'Madhyapradesh', 'Orissa'],
+    'Salescount': [1000, 2000, 3500, 450, 560, 250]
+})
+
+print("SALES DATA")
+print(df)
+
+
+# -----------------------------------------
+# 1. UNGROUPED FREQUENCY DISTRIBUTION
+# -----------------------------------------
+
+print("\nUNGROUPED FREQUENCY DISTRIBUTION")
+
+print(df['State'].value_counts())
+
+plt.hist(df['State'])
+plt.ylabel("Frequency count")
+plt.xlabel("Data")
+plt.title("My Histogram")
+plt.show()
+
+
+# -----------------------------------------
+# 2. GROUPED FREQUENCY DISTRIBUTION
+# -----------------------------------------
+
+print("\nGROUPED FREQUENCY DISTRIBUTION")
+
+df2 = pd.DataFrame({
+    'ID': ['1', '1', '2', '3', '4'],
+    'Product_Name': ['CS', 'SE', 'SE', 'SE', 'CS'],
+    'State': [60, 70, 59, 51, 80],
+    'Salescount': [20, 21, 20, 22, 23]
+})
+
+print(df2)
+
+grouped = df2.groupby('ID')['Salescount'].max()
+print("\nMaximum Salescount:")
+print(grouped)
+
+grouped.plot(kind='bar', legend=True)
+plt.title("Grouped Frequency Distribution")
+plt.show()
+
+
+# -----------------------------------------
+# 3. CUMULATIVE FREQUENCY DISTRIBUTION
+# -----------------------------------------
+
+print("\nCUMULATIVE FREQUENCY DISTRIBUTION")
+
+Salescount = [20, 21, 20, 22, 23]
+
+a, b, c, d = stats.cumfreq(
+    Salescount,
+    numbins=4
+)
+
+print("Array element :", Salescount)
+print("Cumulative frequency :", a)
+print("Lower Limit :", b)
+print("Bin size :", c)
+print("Extra-points :", d)
+
+
+# -----------------------------------------
+# 4. RELATIVE FREQUENCY DISTRIBUTION
+# -----------------------------------------
+
+print("\nRELATIVE FREQUENCY DISTRIBUTION")
+
+fig = plt.figure()
+ax = fig.add_subplot(111)
+
+result = ax.hist(
+    Salescount,
+    edgecolor='black',
+    weights=np.ones_like(Salescount) /
+    len(Salescount)
+)
+
+print(result)
+
+plt.title("Relative Frequency Histogram")
+plt.xlabel("Salescount")
+plt.ylabel("Relative Frequency")
+plt.show()
+
+OUTPUT:
+SALES DATA
+
+  ID Product_name          State  Salescount
+0  1         alex       Taminadu        1000
+1  2          bob      Tamilnadu        2000
+2  3        cathy       Taminadu        3500
+3  4         doge          Andra         450
+4  5         eric  Madhyapradesh         560
+5  6         fred         Orissa         250
+
+
+UNGROUPED FREQUENCY DISTRIBUTION
+
+Taminadu          2
+Tamilnadu         1
+Andra             1
+Madhyapradesh     1
+Orissa            1
+
+My Histogram
+GROUPED FREQUENCY DISTRIBUTION
+
+  ID Product_Name  State  Salescount
+0  1     CS          60       20
+1  1     SE          70       21
+2  2     SE          59       20
+3  3     SE          51       22
+4  4     CS          80       23
+
+Maximum Salescount:
+
+ID
+1    21
+2    20
+3    22
+4    23
+Name: Salescount, dtype: int64
+
+Array element : [20, 21, 20, 22, 23]
+
+Cumulative frequency : [2. 3. 4. 5.]
+Lower Limit : 19.5
+Bin size : 1.0
+Extra-points : 0
+
+(array([0.4, 0. , 0. , 0.2, 0. , 0. , 0.2, 0. , 0. , 0.2]),
+ array([20. , 20.3, 20.6, 20.9, 21.2, 21.5,
+        21.8, 22.1, 22.4, 22.7, 23. ]))
