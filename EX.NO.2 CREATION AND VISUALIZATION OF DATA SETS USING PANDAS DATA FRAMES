@@ -1,0 +1,63 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+author = ['Jitender', 'Purnima', 'Arpit', 'Jyoti']
+article = [210, 211, 114, 178]
+age = [21, 21, 24, 23]
+
+auth_series = pd.Series(author)
+article_series = pd.Series(article)
+
+frame = {'Author': auth_series, 'Article': article_series}
+result = pd.DataFrame(frame)
+result['Age'] = pd.Series(age)
+
+print(result)
+
+df = pd.read_csv('employees.csv')
+
+print(df.head(10))
+print(df.tail(10))
+
+print("DataFrame Shape:", df.shape)
+print("Index:", df.index)
+print("Columns:", df.columns)
+
+new_df = df[df['Bonus %'] > 5]
+print(new_df)
+
+new_df = df.loc[df['Salary'] > 60000]
+print(new_df)
+
+df["Rank"] = df["Salary"].rank()
+print(df)
+
+df.sort_values("Salary", inplace=True)
+print(df)
+
+mean = df['Salary'].mean()
+print("Mean:", mean)
+
+median = df['Bonus %'].median()
+print("Median:", median)
+
+count = df['Bonus %'].count()
+print("Count:", count)
+
+print(df['Salary'].nunique())
+
+df.rename(columns={'Team':'Team_name'}, inplace=True)
+print(df)
+
+OUTPUT:
+
+     Author  Article  Age
+0  Jitender      210   21
+1   Purnima      211   21
+2     Arpit      114   24
+3     Jyoti      178   23
+
+DataFrame Shape: (1000, ...)
+Mean: 90662.181
+Median: 9.8385
+Count: 1000
