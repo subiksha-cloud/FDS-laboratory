@@ -1,0 +1,241 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import io
+import requests
+
+from sklearn.model_selection import train_test_split
+from sklearn.model_selection import KFold, cross_val_score
+from sklearn.linear_model import LogisticRegression
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import confusion_matrix
+
+# CSV file link
+dataURL = "http://www.ats.ucla.edu/stat/data/binary.csv"
+
+# Get CSV file
+getCSV = requests.get(dataURL).content
+
+# Read dataset
+dataset = pd.read_csv(io.StringIO(getCSV.decode('utf-8')))
+
+print(type(dataset))
+print(dataset.head())
+
+# Shape
+print(dataset.shape)
+
+# Dataset information
+print(dataset.info())
+
+# Count non-NA values
+print(dataset.count())
+
+# Columns
+print(dataset.columns)
+
+# Visualization
+sns.set(style="white", context="talk")
+
+f, (ax1, ax2) = plt.subplots(1, 2, figsize=(10,6))
+
+sns.distplot(dataset.iloc[:,1], ax=ax1)
+sns.distplot(dataset.iloc[:,2], ax=ax2)
+
+plt.show()
+
+# Pair plot
+sns.pairplot(dataset,
+             hue='admit',
+             x_vars=["gre", "gpa", "rank"],
+             y_vars=["gre", "gpa", "rank"])
+
+plt.show()
+
+# Convert dataframe into matrix
+dataArray = dataset.values
+
+# Input and output
+X = dataArray[:,1:4]
+y = dataArray[:,0:1]
+
+# Split training and testing data
+validation_size = 0.10
+seed = 9
+
+X_train, X_test, Y_train, Y_test = train_test_split(
+    X, y,
+    test_size=validation_size,
+    random_state=seed
+)
+
+print(X_train.shape)
+print(X_test.shape)
+print(Y_train.shape)
+print(Y_test.shape)
+
+# Prepare models
+num_trees = 200
+max_features = 3
+
+models = []
+
+models.append(('LR', LogisticRegression()))
+models.append(('LDA', LinearDiscriminantAnalysis()))
+models.append(('KNN', KNeighborsClassifier()))
+models.append(('CART', DecisionTreeClassifier()))
+models.append(('RF', RandomForestClassifier(
+    n_estimators=num_trees,
+    max_features=max_features)))
+models.append(('NB', GaussianNB()))
+models.append(('SVM', SVC()))
+
+# Evaluate models
+results = []
+names = []
+
+scoring = 'accuracy'
+
+for name, model in models:
+    kfold = KFold(n_splits=10, random_state=7,
+                  shuffle=True)
+
+    cv_results = cross_val_score(
+        model, X_train, Y_train.ravel(),
+        cv=kfold,
+        scoring=scoring
+    )
+
+    results.append(cv_results)
+    names.append(name)
+
+    msg = "%s: %f (%f)" % (
+        name,
+        cv_results.mean(),
+        cv_results.std()
+    )
+
+    print(msg)
+
+# Boxplot
+fig = plt.figure()
+fig.suptitle('Machine Learning algorithms comparison')
+
+ax = fig.add_subplot(111)
+
+plt.boxplot(results)
+ax.set_xticklabels(names)
+
+plt.show()
+
+# Logistic Regression model
+model = LogisticRegression()
+
+# Fit model
+model.fit(X_train, Y_train.ravel())
+
+# Predictions
+predictions = model.predict(X_test)
+
+# Accuracy
+print("Model --> Logistic Regression")
+print("Overall Accuracy:",
+      accuracy_score(Y_test, predictions) * 100)
+
+print(classification_report(Y_test, predictions))
+
+# Confusion matrix
+cm = confusion_matrix(Y_test, predictions)
+
+sns.heatmap(
+    cm,
+    annot=True,
+    xticklabels=['reject', 'admit'],
+    yticklabels=['reject', 'admit']
+)
+
+plt.show()
+
+# New test data
+new_data = [
+    (720, 4, 1),
+    (300, 2, 1),
+    (400, 4, 4)
+]
+
+new_array = np.asarray(new_data)
+
+labels = ["reject", "admit"]
+
+prediction = model.predict(new_array)
+
+no_of_test_cases, cols = new_array.shape
+
+# Display result
+for i in range(no_of_test_cases):
+    print(
+        "Status of STUDENT with GRE score= {}, "
+        "GPA grade= {}, Rank= {} will be --> {}"
+        .format(
+            new_data[i][0],
+            new_data[i][1],
+            new_data[i][2],
+            labels[int(prediction[i])]
+        )
+    )
+
+OUTPUT:
+<class 'pandas.core.frame.DataFrame'>
+
+   admit  gre   gpa  rank
+0      0  380  3.61     3
+1      1  660  3.67     3
+2      1  800  4.00     1
+3      1  640  3.19     4
+4      0  520  2.93     4
+
+(400, 4)
+
+admit    400
+gre      400
+gpa      400
+rank     400
+dtype: int64
+
+Index(['admit', 'gre', 'gpa', 'rank'], dtype='object')
+
+(360, 3)
+(40, 3)
+(360, 1)
+(40, 1)
+
+LR: 0.694444 (0.087841)
+LDA: 0.700000 (0.088541)
+KNN: 0.658333 (0.079592)
+CART: 0.636111 (0.060157)
+RF: 0.677778 (0.041574)
+NB: 0.688889 (0.088541)
+SVM: 0.658333 (0.093830)
+
+Model --> Logistic Regression
+Overall Accuracy: 77.5
+
+              precision    recall  f1-score   support
+
+         0.0       0.81      0.94      0.87        31
+         1.0       0.50      0.22      0.31         9
+
+    avg       0.74      0.78      0.74        40
+
+Status of STUDENT with GRE score= 720, GPA grade= 4, Rank= 1 will be --> admit
+
+Status of STUDENT with GRE score= 300, GPA grade= 2, Rank= 1 will be --> reject
+
+Status of STUDENT with GRE score= 400, GPA grade= 4, Rank= 4 will be --> reject
