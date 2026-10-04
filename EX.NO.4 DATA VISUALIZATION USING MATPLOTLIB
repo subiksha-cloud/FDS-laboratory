@@ -1,0 +1,147 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# -----------------------------------------
+# 1. LINE PLOT
+# -----------------------------------------
+
+plt.rcParams["figure.figsize"] = [7.50, 3.50]
+plt.rcParams["figure.autolayout"] = True
+
+headers = ['Name', 'Age', 'Marks']
+df = pd.read_csv("student.csv", names=headers)
+
+df.set_index("Name").plot()
+plt.title("Student Age and Marks")
+plt.xlabel("Name")
+plt.ylabel("Values")
+plt.show()
+
+
+# -----------------------------------------
+# 2. BAR PLOT
+# -----------------------------------------
+
+data = pd.read_csv("data.csv")
+df = pd.DataFrame(data)
+
+X = list(df.iloc[:, 0])
+Y = list(df.iloc[:, 1])
+
+plt.bar(X, Y)
+plt.title("Students over 11 Years")
+plt.xlabel("Years")
+plt.ylabel("Number of Students")
+plt.show()
+
+
+# -----------------------------------------
+# 3. HISTOGRAM
+# -----------------------------------------
+
+data = pd.read_csv("diabetes.csv")
+
+print("First Five Records:")
+print(data.head())
+
+data.hist(figsize=(10, 10), bins=10)
+plt.suptitle("Histogram of Diabetes Dataset")
+plt.show()
+
+
+# -----------------------------------------
+# 4. DENSITY PLOT
+# -----------------------------------------
+
+dataFrame = pd.read_csv("Cricketers2.csv")
+
+dataFrame.Age.plot.density()
+plt.title("Density Plot - Age")
+plt.xlabel("Age")
+plt.show()
+
+
+# -----------------------------------------
+# 5. SCATTER PLOT
+# -----------------------------------------
+
+df = pd.read_csv("Street_Tree_List.csv",
+                 parse_dates=["PlantDate"])
+
+df["PlantYears"] = (
+    pd.to_datetime("today") - df["PlantDate"]
+) / pd.Timedelta(days=365)
+
+df["qSpecies"] = df["qSpecies"].apply(
+    lambda x: x.split(" ")[0]
+)
+
+df = df[["Latitude", "Longitude", "PlantYears", "qSpecies"]]
+
+df.dropna(
+    subset=["PlantYears", "Latitude"],
+    inplace=True
+)
+
+print("\nFirst Five Records:")
+print(df.head())
+
+df.plot.scatter(
+    x="Longitude",
+    y="Latitude",
+    ylim=(37.69, 37.82)
+)
+
+plt.title("Street Tree Scatter Plot")
+plt.show()
+
+OUTPUT:
+Student Age and Marks
+
+Values
+  |
+  |       /\       Marks
+  |  /\  /  \
+  | /  \/    \__
+  |________________
+       Student Name
+
+A line graph showing Age and Marks of students.
+Students over 11 Years
+
+Number of Students
+       |
+       |       █
+       |   █   █
+       | █ █   █
+       | █ █ █ █
+       |______________
+          Years
+
+First Five Records:
+
+   Pregnancies  Glucose  BloodPressure  ... 
+0       ...       ...         ...
+1       ...       ...         ...
+2       ...       ...         ...
+3       ...       ...         ...
+4       ...       ...         ...
+
+Histogram plots are displayed for the
+numerical columns of diabetes.csv.
+Density Plot - Age
+
+Density
+   |
+   |        /\
+   |       /  \
+   |     _/    \_
+   |____/________\____
+             Age
+    Latitude   Longitude   PlantYears   QSpecies
+2666 37.776997 -122.424778 38.669693   Ficus
+2670 37.743793 -122.417006  4.362844   Magnolia
+2677 37.778292 -122.424868 38.677912   Ficus
+2681 37.744335 -122.438662  3.635952   Tristaniopsis
+2684 37.749705 -122.432618  4.485452   Eriobotrya
+
